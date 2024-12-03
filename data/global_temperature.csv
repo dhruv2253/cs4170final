@@ -1,4 +1,4 @@
-Year, Month,Monthly Anomaly, Monthly Unc.,  Annual Anomaly, Annual Unc,Five-Year Anomaly, Five-Year Unc., Ten-Year Anomaly, Ten-Year Unc.,  Twenty-Year Anomaly, Twenty-year Unc.
+Year,Month,Monthly Anomaly, Monthly Unc.,Annual Anomaly,Annual Unc,Five-Year Anomaly,Five-Year Unc.,Ten-Year Anomaly,Ten-Year Unc.,Twenty-Year Anomaly,Twenty-year Unc.
 1960,1,-0.001,0.059,-0.099,0.053,0.048,0.044,-0.025,0.041,-0.023,0.035
 1960,2,0.243,0.068,-0.098,0.052,0.045,0.044,-0.025,0.04,-0.02,0.035
 1960,3,-0.566,0.061,-0.09,0.051,0.042,0.043,-0.023,0.04,-0.02,0.035
