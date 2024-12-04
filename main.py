@@ -3,6 +3,7 @@ from dash import dcc, html, Output, Input
 import dash_bootstrap_components as dbc
 from heatmap import get_heatmap_layout, register_heatmap_callbacks
 from line_chart import get_line_chart_layout, register_line_chart_callbacks
+from choropleth import get_choropleth_layout, register_choropleth_callbacks
 
 # Initialize the Dash app
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
@@ -22,7 +23,8 @@ app.layout = dbc.Container([
                     id="feature-selector",
                     options=[
                         {"label": "Heatmap", "value": "heatmap"},
-                        {"label": "Line Chart", "value": "line_chart"},  # New option
+                        {"label": "Line Chart", "value": "line_chart"},
+                        {"label": "Choropleth Map", "value": "choropleth"},  # New option
                     ],
                     value="heatmap",
                     clearable=False,
@@ -47,6 +49,8 @@ def display_feature(feature):
         return get_heatmap_layout()  # load heatmap layout
     elif feature == "line_chart":
         return get_line_chart_layout()  # Load line chart layout
+    elif feature == "choropleth":
+        return get_choropleth_layout()  # Load choropleth map layout
     # Add more conditions for other features
     return html.Div("Select a valid feature.")
 
@@ -54,6 +58,7 @@ def display_feature(feature):
 # Register callbacks for each feature
 register_heatmap_callbacks(app)
 register_line_chart_callbacks(app)
+register_choropleth_callbacks(app)
 
 # Run the app
 if __name__ == "__main__":
