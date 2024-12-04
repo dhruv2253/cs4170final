@@ -4,6 +4,7 @@ import dash_bootstrap_components as dbc
 from heatmap import get_heatmap_layout, register_heatmap_callbacks
 from line_chart import get_line_chart_layout, register_line_chart_callbacks
 from choropleth import get_choropleth_layout, register_choropleth_callbacks
+from predictive_modeling import get_predictive_modeling_layout, register_predictive_modeling_callbacks
 
 # Initialize the Dash app
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
@@ -24,7 +25,8 @@ app.layout = dbc.Container([
                     options=[
                         {"label": "Heatmap", "value": "heatmap"},
                         {"label": "Line Chart", "value": "line_chart"},
-                        {"label": "Choropleth Map", "value": "choropleth"},  # New option
+                        {"label": "Choropleth Map", "value": "choropleth"},
+                        {"label": "Predictive Modeling", "value": "predictive_modeling"},  # New option
                     ],
                     value="heatmap",
                     clearable=False,
@@ -39,6 +41,7 @@ app.layout = dbc.Container([
 ], fluid=True)
 
 
+
 # Callback to dynamically load content based on selected feature
 @app.callback(
     Output("feature-content", "children"),
@@ -51,6 +54,8 @@ def display_feature(feature):
         return get_line_chart_layout()  # Load line chart layout
     elif feature == "choropleth":
         return get_choropleth_layout()  # Load choropleth map layout
+    elif feature == "predictive_modeling":
+        return get_predictive_modeling_layout()  # Load predictive modeling layout
     # Add more conditions for other features
     return html.Div("Select a valid feature.")
 
@@ -59,6 +64,7 @@ def display_feature(feature):
 register_heatmap_callbacks(app)
 register_line_chart_callbacks(app)
 register_choropleth_callbacks(app)
+register_predictive_modeling_callbacks(app)
 
 # Run the app
 if __name__ == "__main__":
