@@ -2,6 +2,7 @@ import dash
 from dash import dcc, html, Output, Input
 import dash_bootstrap_components as dbc
 from heatmap import get_heatmap_layout, register_heatmap_callbacks
+from line_chart import get_line_chart_layout, register_line_chart_callbacks
 
 # Initialize the Dash app
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
@@ -13,7 +14,6 @@ app.config.suppress_callback_exceptions = True
 app.layout = dbc.Container([
     html.H1("Global Climate Dashboard"),
 
-    # Navigation or Section Heading
     html.Div([
         html.H2("Select a Feature:"),
         dbc.Row([
@@ -22,7 +22,7 @@ app.layout = dbc.Container([
                     id="feature-selector",
                     options=[
                         {"label": "Heatmap", "value": "heatmap"},
-                        # Add more options for other features as needed
+                        {"label": "Line Chart", "value": "line_chart"},  # New option
                     ],
                     value="heatmap",
                     clearable=False,
@@ -33,9 +33,8 @@ app.layout = dbc.Container([
         ])
     ], style={"marginBottom": "20px"}),
 
-    # Dynamic Content Placeholder
     html.Div(id="feature-content"),
-], fluid=True)  # Use fluid layout to avoid horizontal scrolling
+], fluid=True)
 
 
 # Callback to dynamically load content based on selected feature
@@ -46,12 +45,15 @@ app.layout = dbc.Container([
 def display_feature(feature):
     if feature == "heatmap":
         return get_heatmap_layout()  # load heatmap layout
+    elif feature == "line_chart":
+        return get_line_chart_layout()  # Load line chart layout
     # Add more conditions for other features
     return html.Div("Select a valid feature.")
 
 
 # Register callbacks for each feature
 register_heatmap_callbacks(app)
+register_line_chart_callbacks(app)
 
 # Run the app
 if __name__ == "__main__":
