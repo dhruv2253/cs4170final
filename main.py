@@ -16,7 +16,6 @@ app.layout = dbc.Container([
     # Navigation or Section Heading
     html.Div([
         html.H2("Select a Feature:"),
-        # Center the dropdown and limit the width
         dbc.Row([
             dbc.Col(
                 dcc.Dropdown(
@@ -27,9 +26,9 @@ app.layout = dbc.Container([
                     ],
                     value="heatmap",
                     clearable=False,
-                    style={"width": "100%"}  # Ensure the dropdown does not overflow
+                    style={"width": "100%"}
                 ),
-                width=12,  # Full-width within its container
+                width=12,
             )
         ])
     ], style={"marginBottom": "20px"}),
@@ -46,7 +45,7 @@ app.layout = dbc.Container([
 )
 def display_feature(feature):
     if feature == "heatmap":
-        return get_heatmap_layout()  # Dynamically load heatmap layout
+        return get_heatmap_layout()  # load heatmap layout
     # Add more conditions for other features
     return html.Div("Select a valid feature.")
 
