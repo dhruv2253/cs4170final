@@ -16,20 +16,27 @@ app.layout = dbc.Container([
     # Navigation or Section Heading
     html.Div([
         html.H2("Select a Feature:"),
-        dcc.Dropdown(
-            id="feature-selector",
-            options=[
-                {"label": "Heatmap", "value": "heatmap"},
-                # Add more options for other features as needed
-            ],
-            value="heatmap",
-            clearable=False,
-        )
-    ]),
+        # Center the dropdown and limit the width
+        dbc.Row([
+            dbc.Col(
+                dcc.Dropdown(
+                    id="feature-selector",
+                    options=[
+                        {"label": "Heatmap", "value": "heatmap"},
+                        # Add more options for other features as needed
+                    ],
+                    value="heatmap",
+                    clearable=False,
+                    style={"width": "100%"}  # Ensure the dropdown does not overflow
+                ),
+                width=12,  # Full-width within its container
+            )
+        ])
+    ], style={"marginBottom": "20px"}),
 
     # Dynamic Content Placeholder
     html.Div(id="feature-content"),
-])
+], fluid=True)  # Use fluid layout to avoid horizontal scrolling
 
 
 # Callback to dynamically load content based on selected feature
