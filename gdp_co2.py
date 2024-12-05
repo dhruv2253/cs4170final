@@ -1,9 +1,11 @@
-from dash import html, dcc, Input, Output
+import dash
+from dash import dcc, html, Input, Output
 import pandas as pd
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
 import plotly.graph_objects as go
+from scipy.stats import pearsonr  # Import pearsonr to calculate the correlation coefficient
 
 
 # Load CO2 Emissions Data
@@ -46,7 +48,12 @@ def train_model(merged_df):
     return model, X_test, y_test, y_pred, merged_df
 
 
-# Plot Results (Interactive Plotly Plot)
+# Calculate the correlation coefficient
+def calculate_correlation(merged_df):
+    correlation, _ = pearsonr(merged_df['gdp'], merged_df['co2_emissions'])
+    return correlation
+
+
 # Plot Results (Interactive Plotly Plot)
 def plot_results(X_test, y_test, y_pred, merged_df):
     fig = go.Figure()
@@ -88,8 +95,6 @@ def plot_results(X_test, y_test, y_pred, merged_df):
             gridwidth=1  # Set gridline width
         ),
         showlegend=True,
-
-        # Set background color to white
         plot_bgcolor="white",  # Plot area background color
         paper_bgcolor="white",  # Whole paper background color
         font=dict(color="black")  # Font color to ensure text is readable
@@ -97,19 +102,29 @@ def plot_results(X_test, y_test, y_pred, merged_df):
 
     return fig
 
+
 # Function for Dash Layout
 def get_gdp_co2_predictive_modeling_layout(co2_file, gdp_file):
     co2_df = load_co2_data(co2_file)
     gdp_df = load_gdp_data(gdp_file)
     merged_df = merge_data(co2_df, gdp_df)
     model, X_test, y_test, y_pred, merged_df = train_model(merged_df)
+    correlation = calculate_correlation(merged_df)  # Calculate correlation
     fig = plot_results(X_test, y_test, y_pred, merged_df)
 
     layout = html.Div([
-        html.H3("CO2 Emissions and GDP Correlation"),
+        html.H4("CO2 Emissions and GDP Correlation"),
         html.P(
             "This section demonstrates the relationship between CO2 emissions and GDP using a linear regression model. "
             "Hover over the data points to see the corresponding country names."),
+
+        # Display correlation value
+        html.Div([
+            html.H4(f"Correlation Coefficient: {correlation:.4f}"),
+            html.P("This value represents the linear relationship between GDP and CO2 emissions. "
+                   "This suggests that, in general, as GDP increases, CO2 emissions also tend to increase, though not in a perfectly linear fashion."),
+        ], style={"marginTop": "20px"}),
+
         dcc.Graph(
             id="gdp-co2-plot",
             figure=fig
@@ -156,6 +171,3 @@ def register_gdp_co2_predictive_modeling_callbacks(app):
             ])
         else:
             return "Hover over a data point to see more details."
-
-
-
