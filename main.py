@@ -11,6 +11,10 @@ from co2_predictive_modeling import (
     get_co2_predictive_modeling_layout,
     register_co2_predictive_modeling_callbacks,
 )
+from gdp_co2 import (
+    get_gdp_co2_predictive_modeling_layout,  # Assuming you created this layout function
+    register_gdp_co2_predictive_modeling_callbacks  # Assuming you created the corresponding callbacks
+)
 
 # Initialize the Dash app
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
@@ -18,9 +22,8 @@ app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 # Suppress callback exceptions for dynamic layouts
 app.config.suppress_callback_exceptions = True
 
-# Define the layout for model evaluation
+# Define the layout for model evaluation (added to Line Chart)
 def get_model_evaluation_layout(mse, r2, coefficients):
-    # Create a more comprehensive and visually appealing model evaluation layout
     explanation = html.Div([
         html.H3("Global Temperature Linear Regression Model Evaluation", className="mb-4"),
 
@@ -28,7 +31,6 @@ def get_model_evaluation_layout(mse, r2, coefficients):
         dbc.Card([
             dbc.CardHeader(html.H4("Model Performance Metrics", className="text-center")),
             dbc.CardBody([
-                # MSE Explanation
                 html.Div([
                     html.H5("Mean Squared Error (MSE)", className="text-primary"),
                     html.P(f"{mse:.4f}", className="lead text-success"),
@@ -95,8 +97,8 @@ app.layout = dbc.Container([
                         {"label": "Line Chart", "value": "line_chart"},
                         {"label": "Choropleth Map", "value": "choropleth"},
                         {"label": "Global Temperature Predictive Modeling", "value": "predictive_modeling"},
-                        {"label": "Model Evaluation on Global Temperatures", "value": "analysis"},
                         {"label": "Co2 Emissions Predictive Modeling", "value": "co2_predictive_modeling"},
+                        {"label": "GDP vs CO2 Correlation", "value": "gdp_co2_correlation"},
                     ],
                     value="heatmap",  # Default value
                     clearable=False,
@@ -117,19 +119,22 @@ app.layout = dbc.Container([
 )
 def display_feature(feature):
     if feature == "heatmap":
-        return get_heatmap_layout()  # load heatmap layout
+        return get_heatmap_layout()  # Load heatmap layout
     elif feature == "line_chart":
-        return get_line_chart_layout()  # Load line chart layout
+        # Run model evaluation when "Line Chart" is selected and include the model evaluation in the same page
+        mse, r2, coefficients = evaluate_model()  # Call evaluate_model from global_temp_model.py
+        return html.Div([
+            get_line_chart_layout(),  # Load the line chart layout
+            get_model_evaluation_layout(mse, r2, coefficients)  # Include model evaluation below the chart
+        ])
     elif feature == "choropleth":
         return get_choropleth_layout()  # Load choropleth map layout
     elif feature == "predictive_modeling":
         return get_predictive_modeling_layout()
-    elif feature == "analysis":
-        # Run model evaluation when "Analysis" is selected
-        mse, r2, coefficients = evaluate_model()  # Call evaluate_model from global_temp_model.py
-        return get_model_evaluation_layout(mse, r2, coefficients)  # Display model evaluation results
     elif feature == "co2_predictive_modeling":
         return get_co2_predictive_modeling_layout()
+    elif feature == "gdp_co2_correlation":  # When GDP vs CO2 is selected
+        return get_gdp_co2_predictive_modeling_layout("data/co2_emissions.csv", "data/archive (3)/gdp.csv")  # Show GDP vs CO2 layout
     return html.Div("Select a valid feature.")
 
 # Register callbacks for each feature
@@ -138,6 +143,7 @@ register_line_chart_callbacks(app)
 register_choropleth_callbacks(app)
 register_predictive_modeling_callbacks(app)
 register_co2_predictive_modeling_callbacks(app)  # Register CO2 Predictive Modeling Callbacks
+register_gdp_co2_predictive_modeling_callbacks(app)  # Register callbacks for GDP vs CO2
 
 # Run the app
 if __name__ == "__main__":
