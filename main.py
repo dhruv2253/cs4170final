@@ -7,6 +7,10 @@ from heatmap import get_heatmap_layout, register_heatmap_callbacks
 from line_chart import get_line_chart_layout, register_line_chart_callbacks
 from choropleth import get_choropleth_layout, register_choropleth_callbacks
 from predictive_modeling import get_predictive_modeling_layout, register_predictive_modeling_callbacks
+from co2_predictive_modeling import (
+    get_co2_predictive_modeling_layout,
+    register_co2_predictive_modeling_callbacks,
+)
 
 # Initialize the Dash app
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
@@ -76,7 +80,6 @@ def get_model_evaluation_layout(mse, r2, coefficients):
 
     return explanation
 
-# Rest of the code remains the same as in your original implementation
 # Define the main layout
 app.layout = dbc.Container([
     html.H1("Global Climate Dashboard"),
@@ -91,8 +94,9 @@ app.layout = dbc.Container([
                         {"label": "Heatmap", "value": "heatmap"},
                         {"label": "Line Chart", "value": "line_chart"},
                         {"label": "Choropleth Map", "value": "choropleth"},
-                        {"label": "Predictive Modeling", "value": "predictive_modeling"},
+                        {"label": "Global Temperature Predictive Modeling", "value": "predictive_modeling"},
                         {"label": "Model Evaluation on Global Temperatures", "value": "analysis"},
+                        {"label": "Co2 Emissions Predictive Modeling", "value": "co2_predictive_modeling"},
                     ],
                     value="heatmap",  # Default value
                     clearable=False,
@@ -105,7 +109,6 @@ app.layout = dbc.Container([
 
     html.Div(id="feature-content"),
 ], fluid=True)
-
 
 # Callback to dynamically load content based on selected feature
 @app.callback(
@@ -125,6 +128,8 @@ def display_feature(feature):
         # Run model evaluation when "Analysis" is selected
         mse, r2, coefficients = evaluate_model()  # Call evaluate_model from global_temp_model.py
         return get_model_evaluation_layout(mse, r2, coefficients)  # Display model evaluation results
+    elif feature == "co2_predictive_modeling":
+        return get_co2_predictive_modeling_layout()
     return html.Div("Select a valid feature.")
 
 # Register callbacks for each feature
@@ -132,6 +137,8 @@ register_heatmap_callbacks(app)
 register_line_chart_callbacks(app)
 register_choropleth_callbacks(app)
 register_predictive_modeling_callbacks(app)
+register_co2_predictive_modeling_callbacks(app)  # Register CO2 Predictive Modeling Callbacks
+
 # Run the app
 if __name__ == "__main__":
     app.run_server(debug=True)
